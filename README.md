@@ -1,2 +1,2 @@
-# Mesh-ploter
-ploting 2D meshes for txt file
+# Mesh-plotter
+plotting 2D meshes
