@@ -1,14 +1,12 @@
 #define SETUP
 #define UPDATE
 #define RENDER
+#define ALMOG_DRAW_LIBRARY_IMPLEMENTATION
+#include "./includes/Almog_Draw_Library.h"
 #include "./includes/display.c"
 #define MATRIX2D_IMPLEMENTATION
 #include "./includes/Matrix2D.h"
-#define ALMOG_DRAW_LIBRARY_IMPLEMENTATION
-#include "./includes/Almog_Draw_Library.h"
-
 #include "./includes/mesher.h"
-
 
 
 Figure figure1;
@@ -27,9 +25,9 @@ void setup(game_state_t *game_state)
         exit(1);
     }
 
-    figure1 = adl_alloc_figure(1100, 1100, (Point){300, 0, 0, 0});
-    mat2D_fill_uint32(figure1.pixels_mat, 0xFFFFFF);
-    adl_draw_axis_on_figure(&figure1);
+    figure1 = adl_alloc_figure(800, 800, (Point){300, 50, 0, 0});
+    figure1.background_color = 0xFFFFFFFF;
+    figure1.to_draw_axis = true;
 
     Curve points;
     ada_init_array(Point, points);
@@ -61,19 +59,18 @@ void setup(game_state_t *game_state)
     }
 
 
-    adl_plot_curves_on_figure(figure1);
 
 }
 
 void update(game_state_t *game_state)
 {
-
+    figure1.offset_zoom_param = game_state->offset_zoom_param;
 }
 
 void render(game_state_t *game_state)
 {
-
+    adl_plot_curves_on_figure(figure1);
     adl_copy_figure_to_screen(game_state->window_pixels_mat, figure1);
-    adl_draw_sentence(game_state->window_pixels_mat, game_state->input_param.NACA, strlen(game_state->input_param.NACA), 10, 10, 40, 0xFFFFFFFF);
+    adl_draw_sentence(game_state->window_pixels_mat, game_state->input_param.NACA, strlen(game_state->input_param.NACA), 10, 10, 40, 0xFFFFFFFF, game_state->offset_zoom_param);
 }
 

@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <errno.h>
+#include "Almog_Draw_Library.h"
 
 #ifndef WINDOW_WIDTH
 #define WINDOW_WIDTH (16 * 100)
@@ -96,6 +97,7 @@ typedef struct {
     Mat2D inv_z_buffer_mat;
 
     Input_param input_param;
+    Offset_zoom_param offset_zoom_param;
 } game_state_t;
 
 int initialize_window(game_state_t *game_state);
@@ -135,7 +137,7 @@ int main(int argc, char const *argv[])
         return 1;
     }
 
-    game_state_t game_state;
+    game_state_t game_state = {0};
 
     game_state.input_param.input_file = input_file;
     game_state.input_param.output_dir = output_dir;
@@ -191,6 +193,8 @@ int main(int argc, char const *argv[])
     game_state.font = NULL;
 
     game_state.game_is_running = !initialize_window(&game_state);
+
+    game_state.offset_zoom_param.zoom_multiplier = 1;
 
     setup_window(&game_state);
 
@@ -291,9 +295,24 @@ void process_input_window(game_state_t *game_state)
                         break;
                     }
                 }
+                if (event.key.keysym.sym == SDLK_w) {
+                    game_state->offset_zoom_param.offset_y += 5/game_state->offset_zoom_param.zoom_multiplier;
+                }
+                if (event.key.keysym.sym == SDLK_s) {
+                    game_state->offset_zoom_param.offset_y -= 5/game_state->offset_zoom_param.zoom_multiplier;
+                }
+                if (event.key.keysym.sym == SDLK_a) {
+                    game_state->offset_zoom_param.offset_x += 5/game_state->offset_zoom_param.zoom_multiplier;
+                }
+                if (event.key.keysym.sym == SDLK_d) {
+                    game_state->offset_zoom_param.offset_x -= 5/game_state->offset_zoom_param.zoom_multiplier;
+                }
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
+                    game_state->left_button_pressed = 1;
+                }
+                if (event.button.button == SDL_BUTTON_RIGHT) {
                     game_state->left_button_pressed = 1;
                 }
                 break;
@@ -302,6 +321,9 @@ void process_input_window(game_state_t *game_state)
                     game_state->left_button_pressed = 0;
                 }
                 break;
+            case SDL_MOUSEWHEEL:
+                game_state->offset_zoom_param.zoom_multiplier += event.wheel.y*0.1*game_state->offset_zoom_param.zoom_multiplier;
+                game_state->offset_zoom_param.zoom_multiplier = fminf(game_state->offset_zoom_param.zoom_multiplier, ADL_MAX_ZOOM);
         }
     }
 }
@@ -327,6 +349,8 @@ void update_window(game_state_t *game_state)
     }
 
     check_window_mat_size(game_state);
+
+    SDL_GetMouseState(&(game_state->offset_zoom_param.mouse_x), &(game_state->offset_zoom_param.mouse_y));
 
     /*----------------------------------------------------------------------------*/
 

@@ -1,6 +1,6 @@
 CCHECKS = -fsanitize=address
 CWARNINGS = -Wall -Wextra -Wuninitialized 
-CFLAGS = $(CWARNINGS) -lm -lSDL2 -lSDL2_ttf -O3
+CFLAGS = $(CWARNINGS) -lm -lSDL2 -lSDL2_ttf
 # O_FILES_MAIN = ./build/main.o ./build/mesher.o ./build/solver.o
 O_FILES_MAIN = ./build/main.o ./build/mesher.o
 
@@ -41,7 +41,8 @@ clean_main:
 	rm -r $(O_FILES_MAIN) ./build/main
 
 
-debug_main: debug_build_mesher debug_build_main debug_build_solver link_main
+# debug_main: debug_build_mesher debug_build_main debug_build_solver link_main
+debug_main: debug_build_mesher debug_build_main link_main
 	gdb ./build/main
 
 	@echo
