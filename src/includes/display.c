@@ -307,6 +307,19 @@ void process_input_window(game_state_t *game_state)
                 if (event.key.keysym.sym == SDLK_d) {
                     game_state->offset_zoom_param.offset_x -= 5/game_state->offset_zoom_param.zoom_multiplier;
                 }
+                if (event.key.keysym.sym == SDLK_e) {
+                    game_state->offset_zoom_param.zoom_multiplier += 0.1*game_state->offset_zoom_param.zoom_multiplier;
+                    game_state->offset_zoom_param.zoom_multiplier = fminf(game_state->offset_zoom_param.zoom_multiplier, ADL_MAX_ZOOM);
+                }
+                if (event.key.keysym.sym == SDLK_q) {
+                    game_state->offset_zoom_param.zoom_multiplier -= 0.1*game_state->offset_zoom_param.zoom_multiplier;
+                    game_state->offset_zoom_param.zoom_multiplier = fminf(game_state->offset_zoom_param.zoom_multiplier, ADL_MAX_ZOOM);
+                }
+                if (event.key.keysym.sym == SDLK_r) {
+                    game_state->offset_zoom_param.zoom_multiplier = 1;
+                    game_state->offset_zoom_param.offset_x = 0;
+                    game_state->offset_zoom_param.offset_y = 0;
+                }
                 break;
             case SDL_MOUSEBUTTONDOWN:
                 if (event.button.button == SDL_BUTTON_LEFT) {
@@ -322,8 +335,6 @@ void process_input_window(game_state_t *game_state)
                 }
                 break;
             case SDL_MOUSEWHEEL:
-                game_state->offset_zoom_param.zoom_multiplier += event.wheel.y*0.1*game_state->offset_zoom_param.zoom_multiplier;
-                game_state->offset_zoom_param.zoom_multiplier = fminf(game_state->offset_zoom_param.zoom_multiplier, ADL_MAX_ZOOM);
         }
     }
 }

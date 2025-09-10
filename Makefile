@@ -1,8 +1,7 @@
 CCHECKS = -fsanitize=address
 CWARNINGS = -Wall -Wextra -Wuninitialized 
-CFLAGS = $(CWARNINGS) -lm -lSDL2 -lSDL2_ttf
-# O_FILES_MAIN = ./build/main.o ./build/mesher.o ./build/solver.o
-O_FILES_MAIN = ./build/main.o ./build/mesher.o
+CFLAGS = $(CWARNINGS) -lm -lSDL2 -lSDL2_ttf -O3
+O_FILES_MAIN = ./build/main.o ./build/mesher.o ./build/solver.o
 
 # IN_FILE=input.txt OUT_DIR=./results make main
 main: build_and_link_main
@@ -32,8 +31,7 @@ link_main: $(O_FILES_MAIN)
 	@echo [INFO] linking
 	@gcc $(O_FILES_MAIN) $(CFLAGS) -o ./build/main
 
-# build_and_link_main: build_mesher build_solver build_main link_main
-build_and_link_main: build_mesher build_main link_main
+build_and_link_main: build_mesher build_solver build_main link_main
 
 clean_main:
 	@echo
@@ -41,8 +39,7 @@ clean_main:
 	rm -r $(O_FILES_MAIN) ./build/main
 
 
-# debug_main: debug_build_mesher debug_build_main debug_build_solver link_main
-debug_main: debug_build_mesher debug_build_main link_main
+debug_main: debug_build_mesher debug_build_main debug_build_solver link_main
 	gdb ./build/main
 
 	@echo
