@@ -233,7 +233,7 @@ void setup(game_state_t *game_state)
     tot_iter = 0;
 
     
-    figure1 = adl_alloc_figure(1200, 1200, (Point){300, 50, 0, 0});
+    figure1 = adl_alloc_figure(1000, 1000, (Point){300, 50, 0, 0});
     figure1.background_color = 0xFFFFFFFF;
     figure1.to_draw_axis = true;
     figure1.to_draw_max_min_values = true;
@@ -249,7 +249,7 @@ void update(game_state_t *game_state)
     
     if (!stop_solving) {
         // for (int iteration = 0; iteration < input_param.max_iteration; iteration++) {
-        for (int iteration = 0; iteration < 200; iteration++) {
+        for (int iteration = 0; iteration < 50; iteration++) {
             tot_iter++;
             apply_BC(current_Q, J_vals_mat, dxi_dx_mat, dxi_dy_mat, deta_dx_mat, deta_dy_mat, ni, nj, i_TEL, i_LE, i_TEU, input_param.Gamma);
 
@@ -303,13 +303,12 @@ void update(game_state_t *game_state)
             }
         }
     }
-
-
 }
 
 void render(game_state_t *game_state)
 {
-    adl_interp_scalar_2D_on_figure(figure1, x_2Dmat, y_2Dmat, M_2Dmat, game_state->input_param.ni, game_state->input_param.nj, "b-r");
+    adl_interp_scalar_2D_on_figure(figure1, x_2Dmat, y_2Dmat, M_2Dmat, game_state->input_param.ni, game_state->input_param.nj, "g-p", 0);
+
     adl_copy_figure_to_screen(game_state->window_pixels_mat, figure1);
 
     adl_draw_sentence(game_state->window_pixels_mat, game_state->input_param.NACA, strlen(game_state->input_param.NACA), 10, 10, 40, 0xFFFFFFFF, ADL_DEFAULT_OFFSET_ZOOM);

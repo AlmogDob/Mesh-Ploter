@@ -76,7 +76,7 @@ void update(game_state_t *game_state)
 void render(game_state_t *game_state)
 {
     // adl_plot_curves_on_figure(figure1);
-    adl_interp_scalar_2D_on_figure(figure1, x_2Dmat, y_2Dmat, M_2Dmat, game_state->input_param.ni, game_state->input_param.nj, "b-c");
+    adl_interp_scalar_2D_on_figure(figure1, x_2Dmat, y_2Dmat, M_2Dmat, game_state->input_param.ni, game_state->input_param.nj, "g-r");
 
     adl_copy_figure_to_screen(game_state->window_pixels_mat, figure1);
     adl_draw_sentence(game_state->window_pixels_mat, game_state->input_param.NACA, strlen(game_state->input_param.NACA), 10, 10, 40, 0xFFFFFFFF, ADL_DEFAULT_OFFSET_ZOOM);
