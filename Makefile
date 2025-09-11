@@ -2,6 +2,7 @@ CCHECKS = -fsanitize=address
 CWARNINGS = -Wall -Wextra -Wuninitialized 
 CFLAGS = $(CWARNINGS) -lm -lSDL2 -lSDL2_ttf -O3
 O_FILES_MAIN = ./build/main.o ./build/mesher.o ./build/solver.o
+O_FILES_animate_solver = ./build/animate_solver.o ./build/mesher.o ./build/solver.o
 
 # IN_FILE=input.txt OUT_DIR=./results make main
 main: build_and_link_main
@@ -89,8 +90,48 @@ profile_build_solver: ./src/solver.c
 	@echo [INFO] building solver
 	@gcc -c ./src/solver.c $(CFLAGS) -p -ggdb -o ./build/solver.o
 
-
 # valgrind -s --leak-check=full ./main
 # cloc --exclude-lang=JSON,make .
 
 ############################################################
+
+animate_solver: build_and_link_animate_solver
+	@echo
+	./build/animate_solver $(IN_FILE) $(OUT_DIR)
+
+	@echo
+	@echo [INFO] removing build files
+	rm -r $(O_FILES_animate_solver) ./build/animate_solver
+
+	@echo
+	@echo [INFO] done
+
+build_animate_solver: 
+	@echo [INFO] building animate_solver
+	@gcc -c ./src/animate_solver.c $(CFLAGS) -o ./build/animate_solver.o
+
+link_animate_solver: $(O_FILES_animate_solver)
+	@echo [INFO] linking
+	@gcc $(O_FILES_animate_solver) $(CFLAGS) -o ./build/animate_solver
+
+build_and_link_animate_solver: build_mesher build_solver build_animate_solver link_animate_solver
+
+clean_animate_solver:
+	@echo
+	@echo [INFO] removing build files
+	rm -r $(O_FILES_animate_solver) ./build/animate_solver
+
+
+debug_animate_solver: debug_build_mesher debug_build_animate_solver debug_build_solver link_animate_solver
+	gdb ./build/animate_solver
+
+	@echo
+	@echo [INFO] removing build files
+	rm -r $(O_FILES_animate_solver)
+
+	@echo
+	@echo [INFO] done
+
+debug_build_animate_solver: 
+	@echo [INFO] building animate_solver
+	@gcc -c ./src/animate_solver.c $(CFLAGS) -ggdb -o ./build/animate_solver.o

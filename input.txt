@@ -1,5 +1,5 @@
 NACA
-25112
+45112
 
 ni
 51
@@ -26,10 +26,10 @@ omega
 1.5
 
 Mach_inf
-1.5
+1.1
 
 angle_of_attack_deg
-2
+11
 
 density
 1.225

@@ -66,33 +66,6 @@ void setup(game_state_t *game_state)
     figure1.to_draw_axis = true;
     figure1.to_draw_max_min_values = true;
 
-    Curve points;
-    ada_init_array(Point, points);
-
-    for (int i = 0; i < input_param.ni; i++) {
-        points.length = 0;
-        for (int j = 0; j < input_param.nj; j++) {
-            Point current_point = {0};
-
-            current_point.x = x_2Dmat[adl_offset2d(i, j, input_param.ni)];
-            current_point.y = y_2Dmat[adl_offset2d(i, j, input_param.ni)];
-
-            ada_appand(Point, points, current_point);
-        }
-        adl_add_curve_to_figure(&figure1, points.elements, points.length, 0x0);
-    }
-    for (int j = 0; j < input_param.nj; j++) {
-        points.length = 0;
-        for (int i = 0; i < input_param.ni; i++) {
-            Point current_point = {0};
-
-            current_point.x = x_2Dmat[adl_offset2d(i, j, input_param.ni)];
-            current_point.y = y_2Dmat[adl_offset2d(i, j, input_param.ni)];
-
-            ada_appand(Point, points, current_point);
-        }
-        adl_add_curve_to_figure(&figure1, points.elements, points.length, 0x0);
-    }
 }
 
 void update(game_state_t *game_state)
@@ -103,7 +76,7 @@ void update(game_state_t *game_state)
 void render(game_state_t *game_state)
 {
     // adl_plot_curves_on_figure(figure1);
-    adl_interp_scalar_2D_on_figure(figure1, x_2Dmat, y_2Dmat, M_2Dmat, game_state->input_param.ni, game_state->input_param.nj, "g-b");
+    adl_interp_scalar_2D_on_figure(figure1, x_2Dmat, y_2Dmat, M_2Dmat, game_state->input_param.ni, game_state->input_param.nj, "b-c");
 
     adl_copy_figure_to_screen(game_state->window_pixels_mat, figure1);
     adl_draw_sentence(game_state->window_pixels_mat, game_state->input_param.NACA, strlen(game_state->input_param.NACA), 10, 10, 40, 0xFFFFFFFF, ADL_DEFAULT_OFFSET_ZOOM);

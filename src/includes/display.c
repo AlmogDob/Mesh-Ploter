@@ -7,11 +7,11 @@
 #include "Almog_Draw_Library.h"
 
 #ifndef WINDOW_WIDTH
-#define WINDOW_WIDTH (16 * 100)
+#define WINDOW_WIDTH (16 * 120)
 #endif
 
 #ifndef WINDOW_HEIGHT
-#define WINDOW_HEIGHT (9 * 100)
+#define WINDOW_HEIGHT (9 * 120)
 #endif
 
 #ifndef FPS

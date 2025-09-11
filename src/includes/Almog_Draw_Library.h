@@ -181,7 +181,7 @@ void adl_draw_axis_on_figure(Figure *figure);
 void adl_draw_max_min_values_on_figure(Figure figure);
 void adl_add_curve_to_figure(Figure *figure, Point *src_points, size_t src_len, uint32_t color);
 void adl_plot_curves_on_figure(Figure figure);
-void adl_interp_scalar_2D_on_figure(Figure figure, double *x_2Dmat, double *y_2Dmat, double *scalar_2Dmat, int ni, int nj, char color_map[]);
+void adl_interp_scalar_2D_on_figure(Figure figure, double *x_2Dmat, double *y_2Dmat, double *scalar_2Dmat, int ni, int nj, char color_scale[]);
 
 #endif /*ALMOG_RENDER_SHAPES_H_*/
 
@@ -682,6 +682,8 @@ void adl_draw_character(Mat2D_uint32 screen_mat, char c, int width_pixel, int hi
     case '+':
         adl_draw_line(screen_mat, x_top_left, y_top_left+hight_pixel/2, x_top_left+width_pixel, y_top_left+hight_pixel/2, color, offset_zoom_param);
         adl_draw_line(screen_mat, x_top_left+width_pixel/2, y_top_left, x_top_left+width_pixel/2, y_top_left+hight_pixel, color, offset_zoom_param);
+        break;
+    case ' ':
         break;
     default:
         adl_draw_rectangle_min_max(screen_mat, x_top_left, x_top_left+width_pixel, y_top_left, y_top_left+hight_pixel, color, offset_zoom_param);
@@ -1468,7 +1470,7 @@ void adl_plot_curves_on_figure(Figure figure)
 
 /* check offset2D. might convert it to a Mat2D */
 #define adl_offset2d(i, j, ni) (j) * (ni) + (i)
-void adl_interp_scalar_2D_on_figure(Figure figure, double *x_2Dmat, double *y_2Dmat, double *scalar_2Dmat, int ni, int nj, char color_map[])
+void adl_interp_scalar_2D_on_figure(Figure figure, double *x_2Dmat, double *y_2Dmat, double *scalar_2Dmat, int ni, int nj, char color_scale[])
 {
     mat2D_fill_uint32(figure.pixels_mat, figure.background_color);
     memset(figure.inv_z_buffer_mat.elements, 0x0, sizeof(double) * figure.inv_z_buffer_mat.rows * figure.inv_z_buffer_mat.cols);
@@ -1481,8 +1483,23 @@ void adl_interp_scalar_2D_on_figure(Figure figure, double *x_2Dmat, double *y_2D
             float val = scalar_2Dmat[adl_offset2d(i, j, ni)];
             if (val > max_scalar) max_scalar = val;
             if (val < min_scalar) min_scalar = val;
+            float current_x = x_2Dmat[adl_offset2d(i, j, ni)];
+            float current_y = y_2Dmat[adl_offset2d(i, j, ni)];
+            if (current_x > figure.max_x) {
+                figure.max_x = current_x;
+            }
+            if (current_y > figure.max_y) {
+                figure.max_y = current_y;
+            }
+            if (current_x < figure.min_x) {
+                figure.min_x = current_x;
+            }
+            if (current_y < figure.min_y) {
+                figure.min_y = current_y;
+            }
         }
     }
+
     float window_w = (float)figure.pixels_mat.cols;
     float window_h = (float)figure.pixels_mat.rows;
 
@@ -1515,27 +1532,27 @@ void adl_interp_scalar_2D_on_figure(Figure figure, double *x_2Dmat, double *y_2D
             float t1 = adl_linear_map(scalar_2Dmat[adl_offset2d(i+1, j+1, ni)], min_scalar, max_scalar, 0, 1);
             float t0 = adl_linear_map(scalar_2Dmat[adl_offset2d(  i, j+1, ni)], min_scalar, max_scalar, 0, 1);
 
-            if (!strcmp(color_map, "b-c")) {
+            if (!strcmp(color_scale, "b-c")) {
                 quad.colors[0] = RGB_hexRGB(0, 255 * t0, 255);
                 quad.colors[1] = RGB_hexRGB(0, 255 * t1, 255);
                 quad.colors[2] = RGB_hexRGB(0, 255 * t2, 255);
                 quad.colors[3] = RGB_hexRGB(0, 255 * t3, 255);
-            } else if (!strcmp(color_map, "b-r")) {
+            } else if (!strcmp(color_scale, "b-r")) {
                 quad.colors[0] = RGB_hexRGB(255 * t0, 0, 255 * (1 - t0));
                 quad.colors[1] = RGB_hexRGB(255 * t1, 0, 255 * (1 - t1));
                 quad.colors[2] = RGB_hexRGB(255 * t2, 0, 255 * (1 - t2));
                 quad.colors[3] = RGB_hexRGB(255 * t3, 0, 255 * (1 - t3));
-            } else if (!strcmp(color_map, "b-g")) {
+            } else if (!strcmp(color_scale, "b-g")) {
                 quad.colors[0] = RGB_hexRGB(0, 255 * t0, 255 * (1 - t0));
                 quad.colors[1] = RGB_hexRGB(0, 255 * t1, 255 * (1 - t1));
                 quad.colors[2] = RGB_hexRGB(0, 255 * t2, 255 * (1 - t2));
                 quad.colors[3] = RGB_hexRGB(0, 255 * t3, 255 * (1 - t3));
-            } else if (!strcmp(color_map, "g-b")) {
+            } else if (!strcmp(color_scale, "g-b")) {
                 quad.colors[0] = RGB_hexRGB(0, 255 * (1 - t0), 255 * t0);
                 quad.colors[1] = RGB_hexRGB(0, 255 * (1 - t1), 255 * t1);
                 quad.colors[2] = RGB_hexRGB(0, 255 * (1 - t2), 255 * t2);
                 quad.colors[3] = RGB_hexRGB(0, 255 * (1 - t3), 255 * t3);
-            } else if (!strcmp(color_map, "g-r")) {
+            } else if (!strcmp(color_scale, "g-r")) {
                 quad.colors[0] = RGB_hexRGB(255 * t0, 255 * (1 - t0), 0);
                 quad.colors[1] = RGB_hexRGB(255 * t1, 255 * (1 - t1), 0);
                 quad.colors[2] = RGB_hexRGB(255 * t2, 255 * (1 - t2), 0);
